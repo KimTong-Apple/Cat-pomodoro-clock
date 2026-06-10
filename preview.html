@@ -1,0 +1,357 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Catodoro - 番茄钟 (预览)</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Helvetica', 'Arial', sans-serif;
+            background: #f5f5f5;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        /* 手机框架 */
+        .phone-frame {
+            width: 375px;
+            height: 812px;
+            background: white;
+            border-radius: 40px;
+            border: 12px solid #000;
+            padding: 12px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            display: flex;
+            flex-direction: column;
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* 刘海 */
+        .notch {
+            position: absolute;
+            top: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 200px;
+            height: 28px;
+            background: #000;
+            border-radius: 0 0 40px 40px;
+            z-index: 10;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 20px;
+            color: white;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .notch-left, .notch-right {
+            display: flex;
+            gap: 4px;
+            align-items: center;
+        }
+
+        /* 主容器 */
+        .container {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            margin-top: 40px;
+            padding: 20px;
+            overflow-y: auto;
+        }
+
+        /* 顶部导航栏 */
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+        }
+
+        .logo {
+            font-size: 28px;
+            font-weight: 700;
+            color: #000;
+            letter-spacing: -0.5px;
+        }
+
+        .menu-btn {
+            width: 32px;
+            height: 32px;
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 24px;
+            color: #000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* 猫咪时钟圆形 */
+        .clock-container {
+            flex: 1;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin: 20px 0;
+        }
+
+        .clock-circle {
+            position: relative;
+            width: 220px;
+            height: 220px;
+            border: 3px solid #000;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: white;
+        }
+
+        /* 内层进度圆 */
+        .progress-ring {
+            position: absolute;
+            width: 200px;
+            height: 200px;
+            border-radius: 50%;
+            border: 2px solid #f0f0f0;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
+
+        /* 猫咪图 */
+        .cat-illustration {
+            position: relative;
+            width: 140px;
+            height: 140px;
+        }
+
+        /* 简化的线条猫 */
+        .cat-svg {
+            width: 100%;
+            height: 100%;
+        }
+
+        /* 时间显示 */
+        .time-display {
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        .time {
+            font-size: 56px;
+            font-weight: 700;
+            color: #000;
+            font-variant-numeric: tabular-nums;
+            letter-spacing: -1px;
+        }
+
+        .time-label {
+            font-size: 14px;
+            color: #666;
+            margin-top: 8px;
+            font-weight: 500;
+        }
+
+        /* 开始按钮 */
+        .start-btn {
+            width: 160px;
+            height: 44px;
+            border: 2px solid #000;
+            border-radius: 22px;
+            background: white;
+            font-size: 16px;
+            font-weight: 600;
+            color: #000;
+            cursor: pointer;
+            margin: 30px auto 0;
+            transition: all 0.3s ease;
+        }
+
+        .start-btn:hover {
+            background: #f5f5f5;
+            transform: scale(1.05);
+        }
+
+        .start-btn:active {
+            transform: scale(0.95);
+        }
+
+        /* 底部导航栏 */
+        .bottom-nav {
+            display: flex;
+            justify-content: space-around;
+            align-items: flex-end;
+            padding: 0 20px 20px;
+            border-top: 1px solid #e0e0e0;
+            margin-top: auto;
+            height: 80px;
+        }
+
+        .nav-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 8px;
+            cursor: pointer;
+            padding: 8px 0;
+            transition: all 0.3s ease;
+        }
+
+        .nav-item:hover {
+            transform: scale(1.1);
+        }
+
+        .nav-icon {
+            width: 32px;
+            height: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            color: #666;
+        }
+
+        .nav-item.active .nav-icon {
+            color: #000;
+        }
+
+        .nav-label {
+            font-size: 11px;
+            color: #666;
+            font-weight: 500;
+        }
+
+        .nav-item.active .nav-label {
+            color: #000;
+            font-weight: 600;
+        }
+
+        /* 响应式设计 */
+        @media (max-width: 600px) {
+            .phone-frame {
+                width: 100%;
+                border-radius: 30px;
+                border-width: 8px;
+            }
+
+            .time {
+                font-size: 48px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="phone-frame">
+        <!-- 刘海 -->
+        <div class="notch">
+            <div class="notch-left">9:41</div>
+            <div class="notch-right">📶 📡 🔋</div>
+        </div>
+
+        <!-- 主容器 -->
+        <div class="container">
+            <!-- 头部 -->
+            <div class="header">
+                <div class="logo">Catodoro</div>
+                <button class="menu-btn">☰</button>
+            </div>
+
+            <!-- 时钟圆形 -->
+            <div class="clock-container">
+                <div class="clock-circle">
+                    <div class="progress-ring"></div>
+                    <div class="cat-illustration">
+                        <svg class="cat-svg" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+                            <!-- 猫头 -->
+                            <circle cx="50" cy="45" r="28" fill="none" stroke="#000" stroke-width="2"/>
+                            <!-- 左耳 -->
+                            <path d="M 30 25 Q 25 10 35 8 Q 32 20 35 28" fill="none" stroke="#000" stroke-width="2"/>
+                            <!-- 右耳 -->
+                            <path d="M 70 25 Q 75 10 65 8 Q 68 20 65 28" fill="none" stroke="#000" stroke-width="2"/>
+                            <!-- 左眼 -->
+                            <circle cx="40" cy="40" r="3" fill="#000"/>
+                            <!-- 右眼 -->
+                            <circle cx="60" cy="40" r="3" fill="#000"/>
+                            <!-- 鼻子 -->
+                            <path d="M 50 50 L 48 55 L 52 55 Z" fill="#000"/>
+                            <!-- 嘴 -->
+                            <path d="M 50 55 Q 45 58 42 56" fill="none" stroke="#000" stroke-width="1.5" stroke-linecap="round"/>
+                            <path d="M 50 55 Q 55 58 58 56" fill="none" stroke="#000" stroke-width="1.5" stroke-linecap="round"/>
+                            <!-- 胡子 -->
+                            <line x1="30" y1="45" x2="18" y2="42" stroke="#000" stroke-width="1.5" stroke-linecap="round"/>
+                            <line x1="30" y1="50" x2="15" y2="52" stroke="#000" stroke-width="1.5" stroke-linecap="round"/>
+                            <line x1="70" y1="45" x2="82" y2="42" stroke="#000" stroke-width="1.5" stroke-linecap="round"/>
+                            <line x1="70" y1="50" x2="85" y2="52" stroke="#000" stroke-width="1.5" stroke-linecap="round"/>
+                            <!-- 身体（时钟） -->
+                            <circle cx="50" cy="70" r="22" fill="none" stroke="#000" stroke-width="2"/>
+                            <circle cx="50" cy="70" r="16" fill="none" stroke="#000" stroke-width="1"/>
+                            <!-- 时针 -->
+                            <line x1="50" y1="70" x2="50" y2="55" stroke="#000" stroke-width="2" stroke-linecap="round"/>
+                            <!-- 分针 -->
+                            <line x1="50" y1="70" x2="62" y2="68" stroke="#000" stroke-width="1.5" stroke-linecap="round"/>
+                            <!-- 中心点 -->
+                            <circle cx="50" cy="70" r="2" fill="#000"/>
+                            <!-- 尾巴 -->
+                            <path d="M 68 60 Q 80 55 78 40" fill="none" stroke="#000" stroke-width="2" stroke-linecap="round"/>
+                        </svg>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 时间显示 -->
+            <div class="time-display">
+                <div class="time">25:00</div>
+                <div class="time-label">专注时间</div>
+            </div>
+
+            <!-- 开始按钮 -->
+            <button class="start-btn">开始专注</button>
+        </div>
+
+        <!-- 底部导航 -->
+        <div class="bottom-nav">
+            <div class="nav-item active">
+                <div class="nav-icon">⏱️</div>
+                <div class="nav-label">专注</div>
+            </div>
+            <div class="nav-item">
+                <div class="nav-icon">📊</div>
+                <div class="nav-label">记录</div>
+            </div>
+            <div class="nav-item">
+                <div class="nav-icon">👤</div>
+                <div class="nav-label">我的</div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 简单的交互示例
+        document.querySelector('.start-btn').addEventListener('click', function() {
+            alert('开始专注计时！');
+        });
+
+        document.querySelectorAll('.nav-item').forEach(item => {
+            item.addEventListener('click', function() {
+                document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active'));
+                this.classList.add('active');
+            });
+        });
+    </script>
+</body>
+</html>
